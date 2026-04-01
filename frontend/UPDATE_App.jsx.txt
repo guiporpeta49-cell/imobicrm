@@ -1,0 +1,12 @@
+No seu App.jsx, mantenha ou adicione:
+
+import ImovelDetalhe from "./pages/ImovelDetalhe";
+
+<Route
+  path="/imoveis/:id"
+  element={
+    <PrivateRoute>
+      <ImovelDetalhe />
+    </PrivateRoute>
+  }
+/>

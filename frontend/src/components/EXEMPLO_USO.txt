@@ -1,0 +1,10 @@
+
+IMPORTAR NO SEU PROJETO:
+
+import UploadMidiaImovel from "./components/UploadMidiaImovel";
+import GaleriaImovel from "./components/GaleriaImovel";
+
+USO:
+
+<UploadMidiaImovel imovelId={1} onUpload={carregarMidias} />
+<GaleriaImovel imovelId={1} />

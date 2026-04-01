@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  @apply text-slate-100 antialiased;
+  background:
+    radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 24%),
+    radial-gradient(circle at top right, rgba(34,211,238,0.14), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(139,92,246,0.12), transparent 20%),
+    linear-gradient(135deg, #020814 0%, #07111e 35%, #09182b 100%);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148,163,184,0.45) transparent;
+}
+
+.card-premium {
+  @apply rounded-[1.75rem] border border-cyan-950/50 bg-[#071526]/88 backdrop-blur-md;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 16px 40px rgba(2,8,20,0.36);
+}
+
+.card-metric-premium {
+  @apply rounded-[1.75rem] border p-6 backdrop-blur-md;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 16px 40px rgba(2,8,20,0.36);
+}
+
+.metric-emerald {
+  @apply border-emerald-900/40;
+  background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(7,21,38,0.92));
+}
+
+.metric-cyan {
+  @apply border-cyan-900/40;
+  background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(7,21,38,0.92));
+}
+
+.metric-amber {
+  @apply border-amber-900/40;
+  background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(7,21,38,0.92));
+}
+
+.metric-violet {
+  @apply border-violet-900/40;
+  background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(7,21,38,0.92));
+}
+
+.table-premium {
+  @apply overflow-hidden rounded-[1.6rem] border border-cyan-950/50 bg-[#071526]/92 backdrop-blur-md;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 16px 40px rgba(2,8,20,0.36);
+}
+
+.table-premium table thead {
+  @apply bg-white/[0.04] text-slate-300;
+}
+
+.table-premium table tbody tr {
+  @apply border-t border-white/5;
+}
+
+.table-premium table tbody tr:hover {
+  @apply bg-white/[0.03];
+}
+
+.btn {
+  @apply rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-200 transition hover:bg-white/10;
+}
