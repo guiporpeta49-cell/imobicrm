@@ -68,16 +68,20 @@ function SidebarContent({ collapsed, setCollapsed, handleLogout, user, isAdmin, 
       <div className={`flex items-center border-b border-white/5 px-4 py-5 ${collapsed ? "justify-center" : "justify-between"}`}>
         <div className="flex items-center gap-3 min-w-0">
           {user?.empresa_logo ? (
-            <img
-              src={`http://127.0.0.1:8000${user.empresa_logo}`}
-              alt="Logo"
-              className="h-11 w-11 rounded-2xl object-cover ring-1 ring-white/10"
-            />
-          ) : (
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 font-bold text-emerald-200">
-              {initials(empresaNome)}
-            </div>
-          )}
+  <img
+    src={
+      user.empresa_logo.startsWith("http")
+        ? user.empresa_logo
+        : `${API_BASE_URL}${user.empresa_logo}`
+    }
+    alt="Logo"
+    className="h-11 w-11 rounded-2xl object-cover ring-1 ring-white/10"
+  />
+) : (
+  <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 font-bold text-emerald-200">
+    {initials(empresaNome)}
+  </div>
+)}
 
           {!collapsed ? (
             <div className="min-w-0">
