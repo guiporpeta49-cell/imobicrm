@@ -22,6 +22,14 @@ def bloquear_atendente(user: Corretor):
         raise HTTPException(status_code=403, detail="Sem permissão para acessar negociações")
 
 
+def obter_valor_imovel(imovel: Imovel) -> Decimal:
+    if imovel.finalidade == "aluguel":
+        valor_base = imovel.valor_locacao or 0
+    else:
+        valor_base = imovel.valor_venda or imovel.valor_locacao or 0
+    return Decimal(str(valor_base))
+
+
 @router.post("/", response_model=NegociacaoResponse)
 def criar_negociacao(
     payload: NegociacaoCreate,
@@ -49,7 +57,7 @@ def criar_negociacao(
         raise HTTPException(status_code=404, detail="Imóvel não encontrado")
 
     corretor_id = imovel.corretor_id or user.id
-    valor_imovel = Decimal(str(imovel.valor))
+    valor_imovel = obter_valor_imovel(imovel)
     valor_negociado = Decimal(str(payload.valor_negociado))
     percentual_lucro = Decimal(str(payload.percentual_lucro))
     valor_lucro = calcular_lucro(valor_negociado, percentual_lucro)
@@ -150,13 +158,14 @@ def atualizar_negociacao(
     if not imovel:
         raise HTTPException(status_code=404, detail="Imóvel não encontrado")
 
-    valor_imovel = Decimal(str(imovel.valor))
+    valor_imovel = obter_valor_imovel(imovel)
     valor_negociado = Decimal(str(payload.valor_negociado))
     percentual_lucro = Decimal(str(payload.percentual_lucro))
     valor_lucro = calcular_lucro(valor_negociado, percentual_lucro)
 
     negociacao.cliente_id = payload.cliente_id
     negociacao.imovel_id = payload.imovel_id
+    negociacao.corretor_id = imovel.corretor_id or user.id
     negociacao.valor_imovel = valor_imovel
     negociacao.valor_negociado = valor_negociado
     negociacao.percentual_lucro = percentual_lucro

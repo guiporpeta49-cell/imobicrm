@@ -121,7 +121,18 @@ export default function Dashboard() {
   const hojeLista = grouped[hoje] || [];
   const diaSelecionado = grouped[dateKey(selectedDate)] || [];
 
-  const totalImoveis = useMemo(() => imoveis.reduce((a, i) => a + Number(i.valor || 0), 0), [imoveis]);
+  const totalImoveis = useMemo(
+  () =>
+    imoveis.reduce((a, i) => {
+      const valor =
+        String(i.finalidade || "").toLowerCase() === "aluguel"
+          ? Number(i.valor_locacao || 0)
+          : Number(i.valor_venda || i.valor_locacao || 0);
+
+      return a + valor;
+    }, 0),
+  [imoveis]
+  );
   const totalNegociacoes = useMemo(() => negociacoes.reduce((a, n) => a + Number(n.valor_negociado || 0), 0), [negociacoes]);
   const totalComissao = useMemo(() => negociacoes.reduce((a, n) => a + Number(n.valor_lucro || 0), 0), [negociacoes]);
 
