@@ -1,5 +1,4 @@
 import os
-import shutil
 import uuid
 from pathlib import Path
 
@@ -18,7 +17,8 @@ router = APIRouter(prefix="/imoveis", tags=["Imóveis - Mídias"])
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 UPLOAD_DIR = BASE_DIR / "uploads" / "imoveis"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-
+MAX_UPLOAD_SIZE_MB = int(os.getenv("MAX_UPLOAD_SIZE_MB", "20"))
+MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024
 
 
 def detectar_tipo(content_type: str) -> str:
@@ -27,6 +27,28 @@ def detectar_tipo(content_type: str) -> str:
     if content_type.startswith("video/"):
         return "video"
     raise HTTPException(status_code=400, detail="Arquivo deve ser imagem ou vídeo")
+
+
+def salvar_upload_em_disco(upload: UploadFile, destino: Path) -> None:
+    total = 0
+
+    with destino.open("wb") as buffer:
+        while True:
+            chunk = upload.file.read(1024 * 1024)
+            if not chunk:
+                break
+
+            total += len(chunk)
+            if total > MAX_UPLOAD_SIZE_BYTES:
+                buffer.close()
+                if destino.exists():
+                    destino.unlink()
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"Arquivo muito grande. Limite máximo: {MAX_UPLOAD_SIZE_MB}MB.",
+                )
+
+            buffer.write(chunk)
 
 
 @router.post("/{imovel_id}/midias", response_model=ImovelMidiaResponse)
@@ -54,9 +76,7 @@ def upload_midia_imovel(
     nome_unico = f"{uuid.uuid4().hex}{extensao}"
     caminho_arquivo = UPLOAD_DIR / nome_unico
 
-
-    with open(caminho_arquivo, "wb") as buffer:
-         shutil.copyfileobj(arquivo.file, buffer)
+    salvar_upload_em_disco(arquivo, caminho_arquivo)
 
     url = f"/uploads/imoveis/{nome_unico}"
 
@@ -124,7 +144,7 @@ def deletar_midia_imovel(
 
     caminho_fisico = BASE_DIR / midia.arquivo_url.lstrip("/")
     if caminho_fisico.exists():
-         caminho_fisico.unlink()
+        caminho_fisico.unlink()
 
     db.delete(midia)
     db.commit()

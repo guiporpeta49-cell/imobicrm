@@ -1,11 +1,29 @@
 import { useState } from "react";
 import api from "../services/api";
 
+const MAX_UPLOAD_SIZE_MB = Number(import.meta.env.VITE_MAX_UPLOAD_SIZE_MB || 20);
+const MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024;
+
 export default function UploadMidiaImovel({ imovelId, onUpload }) {
   const [arquivo, setArquivo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
+
+  function handleFileChange(e) {
+    const file = e.target.files?.[0] || null;
+    setErro("");
+    setSucesso("");
+
+    if (file && file.size > MAX_UPLOAD_SIZE_BYTES) {
+      setArquivo(null);
+      e.target.value = "";
+      setErro(`O arquivo excede o limite de ${MAX_UPLOAD_SIZE_MB}MB.`);
+      return;
+    }
+
+    setArquivo(file);
+  }
 
   async function handleUpload(e) {
     e?.preventDefault?.();
@@ -55,7 +73,7 @@ export default function UploadMidiaImovel({ imovelId, onUpload }) {
         id={`upload-imovel-${imovelId}`}
         type="file"
         accept="image/*,video/*"
-        onChange={(e) => setArquivo(e.target.files?.[0] || null)}
+        onChange={handleFileChange}
         className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white"
       />
 
@@ -64,6 +82,10 @@ export default function UploadMidiaImovel({ imovelId, onUpload }) {
           Arquivo selecionado: <strong>{arquivo.name}</strong>
         </p>
       ) : null}
+
+      <p className="text-xs text-slate-400">
+        Tamanho máximo permitido: {MAX_UPLOAD_SIZE_MB}MB.
+      </p>
 
       <button
         type="button"

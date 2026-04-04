@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { buildFileUrl } from "../services/api";
 
 export default function GaleriaImovel({ imovelId }) {
   const [midias, setMidias] = useState([]);
@@ -35,7 +35,7 @@ export default function GaleriaImovel({ imovelId }) {
           <div key={midia.id}>
             {midia.tipo === "foto" ? (
               <img
-                src={`http://127.0.0.1:8000${midia.arquivo_url}`}
+                src={buildFileUrl(midia.arquivo_url)}
                 alt={midia.nome_arquivo}
                 style={{ width: "180px", borderRadius: "8px", objectFit: "cover" }}
               />
@@ -43,7 +43,7 @@ export default function GaleriaImovel({ imovelId }) {
               <video
                 controls
                 style={{ width: "220px", borderRadius: "8px" }}
-                src={`http://127.0.0.1:8000${midia.arquivo_url}`}
+                src={buildFileUrl(midia.arquivo_url)}
               />
             )}
           </div>

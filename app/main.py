@@ -32,13 +32,14 @@ from app.models.negociacao import Negociacao
 
 app = FastAPI()
 
+cors_origins_env = os.getenv("CORS_ALLOW_ORIGINS", "*")
+allow_all_origins = cors_origins_env.strip() == "*"
+allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()] if not allow_all_origins else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials=not allow_all_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
